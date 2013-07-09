@@ -19,6 +19,6 @@ var http_server = http.createServer(function (request, response) {
 http_server.listen(8000);
 tcp_server.listen(7000);
 
-console.log("HTTP Server running at http://127.0.0.1:8000/");
-console.log("TCP Server running at 127.0.0.1:7000");
+console.log("HTTP server listening on port 8000");
+console.log("TCP server listening on port 7000");
 
