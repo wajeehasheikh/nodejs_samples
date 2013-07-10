@@ -1,0 +1,12 @@
+{
+    "name": "ChatDemo",
+    "version": "0.0.1",
+    "description": "Multiplatform Chat Demo",
+    "dependencies": {
+        "socket.io": "latest",
+        "express": "latest",
+        "jade": "latest",
+        "cli-color":"latest"
+    },
+    "author": "Shahzeb Ihsan"
+}
