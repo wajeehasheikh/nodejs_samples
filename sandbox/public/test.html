@@ -1,0 +1,22 @@
+<html>
+    <head>
+    	<script src="/socket.io/socket.io.js" type="text/javascript"></script>
+    	<script type="text/javascript">
+            var tick  = io.connect('https://192.168.43.104:443', {secure: true, port: '443'});
+            tick.on('data', function (data) {
+                console.log(data);
+            });
+
+            tick.on('error', function (reason){
+              console.error('Unable to connect Socket.IO:' + reason, reason);
+            });
+
+            tick.on('connect', function (){
+              console.info('successfully established a working and authorized connection');
+            });
+    	</script>
+    </head>
+    <body>
+        Ofen the console to see tick-tocks!
+    </body>
+</html>
