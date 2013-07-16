@@ -1,6 +1,6 @@
 window.onload = function() {
     var messages = [];
-    var socket = io.connect('http://192.168.43.104:17231');
+    var socket = io.connect('http://192.168.43.104:443',  {secure: true, port: 443});
     //var socket = io.connect('http://192.168.0.105:17231');
     var field = document.getElementById("field");
     var sendButton = document.getElementById("send");
