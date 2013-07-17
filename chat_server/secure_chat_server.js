@@ -8,6 +8,7 @@ var https = require('https');
 var http = require('http');
 var clc = require('cli-color');
 var fs = require('fs');
+var util = require('util');
 
 /* Specify keys and certificates */
 var options = {
@@ -35,7 +36,7 @@ app.engine('jade', jade.__express);
 
 /* Render view on default GET */
 app.get('/', function(req, res){
-    res.render('secure_page');
+    res.render('secure_login');
 });
 
 /* Create HTTP server  */
@@ -59,12 +60,13 @@ server.sockets.on('connection', function (socket) {
 
     socket.emit('message', { message: 'Browser Chat Client v' + version});
     
-    socket.on('send', function (data) {
+    /*socket.on('send', function (data) {
         data.message = address + ':' + port + '> ' + data.message;
         server.sockets.emit('message', data);
-    });
+    });*/
 
     socket.on('data', function (data) {
-        util.puts('Data <<' + data + '>>  from ' + socket.handshake.address.address  + ':' +  socket.handshake.address.port);
+        console.log(clc.blue('   debug - Ooga Booga'));
+        util.puts('Data <<' + data.username + ',' + data.password + '>>  from ' + socket.handshake.address.address  + ':' +  socket.handshake.address.port);
     });
 });

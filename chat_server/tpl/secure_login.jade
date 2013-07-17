@@ -1,0 +1,13 @@
+head
+    title= "Real time web chat"
+    script(src='/secure_login.js')
+    script(src='/socket.io/socket.io.js')
+        title= "Real time web chat"
+    body
+        .controls
+            Label Username
+            input#user(style='width:350px;')
+            br
+            Label Password
+            input#password(type='password', style='width:350px;')
+            input#login(type='button', value='login')
