@@ -6,18 +6,15 @@ window.onload = function() {
     var password = document.getElementById("password");
     var login = document.getElementById("login");
 
-    socket.on('message', function (data) {
-        if(data.message) {
-            console.log(data.message);
-        } else {
-            console.log("There is a problem:", data);
-        }
+    socket.on('redirect', function (data) {
+        console.log("redirect to: ", data.toUrl);
+        window.location.href = data.toUrl;
     });
 
     login.onclick = function() {
         var _username = username.value;
         var _password = password.value;
         console.log(_username + ", " + _password);
-        socket.emit('data', {username: _username, password: _password });
+        socket.emit('login', {username: _username, password: _password });
      };
 }

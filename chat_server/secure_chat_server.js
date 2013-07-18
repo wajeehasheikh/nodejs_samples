@@ -9,6 +9,10 @@ var http = require('http');
 var clc = require('cli-color');
 var fs = require('fs');
 var util = require('util');
+var connect =  require('connect');
+var cookie  =   require('cookie');
+
+var authenticated = false;
 
 /* Specify keys and certificates */
 var options = {
@@ -26,6 +30,29 @@ var version = '0.1'
 /* Initialize ExpressJS "app" */
 var app = express(express.logger()); 
 
+//==============================================================================
+app.use(express.cookieParser());
+
+app.use(function (req, res, next) {
+  // check if client sent cookie
+  var cookie = req.cookies.cookieName;
+  console.log(clc.red("cookie: " + cookie + ", url: " + req.url));
+  if (cookie === undefined)
+  {
+    res.cookie('cookieName', 123456789, { maxAge: 900000, httpOnly: false });
+    console.log(clc.red('Cookie created successfully'));
+    authenticated = false;
+  } 
+  else
+  {
+    // yes, cookie was already present 
+    console.log(clc.red('Cookie exists: ' + cookie));
+    authenticated = true;
+  } 
+  next(); // <-- important!
+});
+//==============================================================================
+
 /* Specify directories */
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/tpl');
@@ -36,7 +63,15 @@ app.engine('jade', jade.__express);
 
 /* Render view on default GET */
 app.get('/', function(req, res){
-    res.render('secure_login');
+    if(!authenticated) {
+        res.render('secure_login');
+    } else {
+        res.render('secure_page');
+    }
+});
+
+app.get('/success', function(req, res){
+    res.render('secure_page');
 });
 
 /* Create HTTP server  */
@@ -58,15 +93,20 @@ server.sockets.on('connection', function (socket) {
     var port = socket.handshake.address.port;
     console.log(clc.blue('   debug - New connection from ' + address + ':' + port));
 
-    socket.emit('message', { message: 'Browser Chat Client v' + version});
-    
-    /*socket.on('send', function (data) {
+    socket.on('send', function (data) {
         data.message = address + ':' + port + '> ' + data.message;
         server.sockets.emit('message', data);
-    });*/
-
-    socket.on('data', function (data) {
-        console.log(clc.blue('   debug - Ooga Booga'));
-        util.puts('Data <<' + data.username + ',' + data.password + '>>  from ' + socket.handshake.address.address  + ':' +  socket.handshake.address.port);
     });
+
+    socket.on('login', function (data) {
+        console.log(clc.blue('   debug - Data <<' + data.username + ',' + data.password + '>>  from ' + socket.handshake.address.address  + ':' +  socket.handshake.address.port));
+        console.log(clc.blue('   debug - Authenticated: ' + authenticated));
+        socket.emit('redirect', { toUrl: 'success'});
+    });
+});
+
+/* ... */
+server.set('authorization', function (handshakeData, accept) {
+    console.log(clc.blue('   debug - Something happened, cookie eaten: ' + cookie.parse(handshakeData.headers.cookie)));
+    accept(null, true);
 });
