@@ -1,6 +1,6 @@
 window.onload = function() {
     var messages = [];
-    var socket = io.connect('http://192.168.0.105:443',  {secure: true, port: 443});
+    var socket = io.connect('http://192.168.0.104:443',  {secure: true, port: 443});
     //var socket = io.connect('http://192.168.0.105:17231');
     var username = document.getElementById("user");
     var password = document.getElementById("password");

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// Note to my idiot self: Cookies are used for http/https state saving, Socket.io session authorization is for websocket connection authentication.
+
 /* Setup dependencies */
 var jade = require('jade');
 var io = require('socket.io');
@@ -32,7 +34,7 @@ var app = express(express.logger());
 
 //==============================================================================
 app.use(express.cookieParser());
-
+app.use(express.session({secret: 'secret', key: 'express.sid'}));
 app.use(function (req, res, next) {
   // check if client sent cookie
   var cookie = req.cookies.cookieName;
@@ -107,6 +109,15 @@ server.sockets.on('connection', function (socket) {
 
 /* ... */
 server.set('authorization', function (handshakeData, accept) {
-    console.log(clc.blue('   debug - Something happened, cookie eaten: ' + cookie.parse(handshakeData.headers.cookie)));
-    accept(null, true);
+  if (handshakeData.headers.cookie) {
+    handshakeData.cookie = cookie.parse(handshakeData.headers.cookie);
+    console.log(clc.blue('   debug - URL: ' + handshakeData.url));
+    console.log(clc.blue('   debug - Something happened, cookie eaten: ' + connect.utils.parseSignedCookie(handshakeData.cookie['express.sid'], 'secret')));
+  }
+  else
+  {
+    console.log(clc.blue('   debug - No cookie transmitted...'));
+  }
+      accept(null, true);
+      //accept('ooga booga', false);
 });
